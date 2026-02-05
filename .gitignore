@@ -1,0 +1,43 @@
+# Compiled binaries
+agent.exe
+*.exe
+*.dll
+*.o
+*.obj
+
+# Database
+c2.db
+*.db
+*.sqlite
+
+# SSL Certificates
+cert.pem
+key.pem
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
