@@ -807,7 +807,7 @@ HTML_TEMPLATE = """
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>XVX C2 Framework</title>
+    <title>PULSE C2 Framework</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1889,7 +1889,7 @@ HTML_TEMPLATE = """
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo">
-            <div class="logo-text">XVX</div>
+            <div class="logo-text">PULSE</div>
             <div class="logo-subtitle">C2 FRAMEWORK</div>
         </div>
         
@@ -2017,7 +2017,7 @@ HTML_TEMPLATE = """
                         </div>
                         <div class="shell-output" id="shell-output">
                             <div class="shell-line">
-                                <span style="color: var(--text-muted);">Welcome to XVX Interactive Shell</span>
+                                <span style="color: var(--text-muted);">Welcome to PULSE Interactive Shell</span>
                             </div>
                             <div class="shell-line">
                                 <span style="color: var(--text-muted);">Click an agent to start session</span>
@@ -2098,7 +2098,7 @@ HTML_TEMPLATE = """
     </div>
     
     <script>
-        console.log('[JS] ========== XvX C2 DASHBOARD SCRIPT LOADED ==========');
+        console.log('[JS] ========== PULSE C2 DASHBOARD SCRIPT LOADED ==========');
         console.log('[JS] Initializing global variables...');
         
         // Capture toutes les erreurs JavaScript
