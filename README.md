@@ -4,11 +4,11 @@
 ![C++](https://img.shields.io/badge/C++-17-blue)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey)
 
+![C2 screenshot](https://github.com/28Zaaky/Usermode-Rootkit/blob/82292f2a6d0c4f46ad9b3db686fc275e6ce17589/Capture%20d'%C3%A9cran%202025-12-12%20173844.png)
+
 HTTPS Command & Control infrastructure with web dashboard for remote Windows agent management.
 
-**Extracted from:** [XvX Usermode Rootkit](https://github.com/28Zaaky/Usermode-Rootkit)
-
-> **⚠️ Educational Use Only** - For security research and defensive learning purposes only.
+> **⚠️ Educational Use Only** - Illegal use = your responsibility.
 
 ## Features
 
@@ -68,10 +68,6 @@ Agent → POST /api/result → Server (send results)
 ## Related Project
 
 This C2 framework is extracted from the [XvX Usermode Rootkit](https://github.com/28Zaaky/Usermode-Rootkit) project. The full rootkit version includes a more complete C2 with over 15 commands, including process/file/registry hiding, SYSTEM privilege escalation, interactive reverse shells, keylogger functionality, DLL injection, and EDR evasion techniques. This standalone version provides the core C2 infrastructure for educational purposes and easy integration into custom projects.
-
-## Disclaimer
-
-**Educational use only.** Unauthorized use is illegal. Use responsibly.
 
 ## Contact
 
